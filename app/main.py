@@ -6,8 +6,7 @@ from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from .database import engine
 from .models import Base
-from app.routes import users, expenses
-from . import auth
+from app.routes import users, expenses, auth
 
 Base.metadata.create_all(bind=engine)
 

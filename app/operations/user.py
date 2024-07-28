@@ -11,6 +11,7 @@ from sqlalchemy.orm import Session
 from app import models
 from app.schemas import UserCreate
 from app.utils.password import hash_password
+from app.operations.auth import user_dependency
 
 def create_user(db: Session, user: UserCreate):
     """
@@ -40,7 +41,7 @@ def create_user(db: Session, user: UserCreate):
 
     
 
-def get_user(db: Session, email: str):
+def get_user(user: user_dependency, db: Session, email: str):
     """
     Get a user by ID.
 

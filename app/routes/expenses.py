@@ -11,15 +11,13 @@ from sqlalchemy.orm import Session
 from fastapi.responses import StreamingResponse
 from .. import operations, schemas
 from ..database import SessionLocal
+from app.operations.auth import user_dependency
 
 router = APIRouter()
 
 def get_db():
     """
-    Create a new database session for each request.
-
-    Returns:
-        Session: The database session
+    Function to get a database session.
     """
     db = SessionLocal()
     try:
@@ -28,11 +26,12 @@ def get_db():
         db.close()
 
 @router.post("/", response_model=schemas.Expense)
-def create_expense(expense: schemas.ExpenseCreate, db: Session = Depends(get_db)):
+def create_expense(user: user_dependency, expense: schemas.ExpenseCreate, db: Session = Depends(get_db)):
     """
-    Create an expense in the database.
+    Route to create an expense.
 
     Attributes:
+        user (dict): The user details.
         expense (ExpenseCreate): The expense details.
         db (Session): The database session.
 
@@ -40,45 +39,46 @@ def create_expense(expense: schemas.ExpenseCreate, db: Session = Depends(get_db)
         Expense: The created expense.
     """
     try:
-        return operations.create_expense(db, expense)
+        return operations.create_expense(user, db, expense)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e)) from e
 
 @router.get("/{expense_id}", response_model=schemas.Expense)
-def get_expense(expense_id: int, db: Session = Depends(get_db)):
+def get_expense(user: user_dependency, expense_id: int, db: Session = Depends(get_db)):
     """
-    Get an expense by ID.
+    Route to get an expense by ID.
 
     Attributes:
-        expense_id (int): The ID of the expense.
+        user (dict): The user details.
+        expense_id (int): The expense ID.
         db (Session): The database session.
 
     Returns:
-        Expense: The expense with the specified ID.
+        Expense: The expense details.
     """
-    db_expense = operations.get_expense(db, expense_id)
+    db_expense = operations.get_expense(user, db, expense_id)
     if db_expense is None:
         raise HTTPException(status_code=404, detail="Expense not found")
     return db_expense
 
-@router.get("/user/{user_id}", response_model=List[schemas.Participant])
-def get_user_expenses(user_id: int, db: Session = Depends(get_db)):
+@router.get("/user/", response_model=List[schemas.Participant])
+def get_user_expenses(user: user_dependency, db: Session = Depends(get_db)):
     """
-    Get all expenses for a user.
+    Route to get all expenses for a user.
 
     Attributes:
-        user_id (int): The ID of the user.
+        user (dict): The user details.
         db (Session): The database session.
 
     Returns:
         List[Participant]: The list of expenses for the user.
     """
-    return operations.get_user_expenses(db, user_id)
+    return operations.get_user_expenses(user, db)
 
 @router.get("/balance-sheet/")
 def download_balance_sheet(db: Session = Depends(get_db)):
     """
-    Download the Expense balance sheet CSV file.
+    Route to download a balance sheet.
 
     Attributes:
         db (Session): The database session.

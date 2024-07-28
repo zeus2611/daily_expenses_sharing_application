@@ -8,6 +8,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from .. import operations, schemas
 from ..database import SessionLocal
+from app.operations.auth import user_dependency
 
 router = APIRouter()
 
@@ -39,7 +40,7 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     return operations.create_user(db, user)
 
 @router.get("/{email}", response_model=schemas.User)
-def get_user(email: str, db: Session = Depends(get_db)):
+def get_user(user: user_dependency, email: str, db: Session = Depends(get_db)):
     """
     Get a user by ID.
 
@@ -50,7 +51,7 @@ def get_user(email: str, db: Session = Depends(get_db)):
     Returns:
         User: The user with the specified ID.
     """
-    db_user = operations.get_user(db, email)
+    db_user = operations.get_user(user, db, email)
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
     return db_user
