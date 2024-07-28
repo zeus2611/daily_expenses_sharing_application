@@ -9,3 +9,4 @@ app/schemas/__pycache__
 app/models/__pycache__
 app/operations/__pycache__
 expenses.db
+.DS_Store
