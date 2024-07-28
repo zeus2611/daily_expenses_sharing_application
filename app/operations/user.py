@@ -10,6 +10,7 @@ from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from app import models
 from app.schemas import UserCreate
+from app.utils.password import hash_password
 
 def create_user(db: Session, user: UserCreate):
     """
@@ -24,13 +25,14 @@ def create_user(db: Session, user: UserCreate):
     """
 
     # Check if the email is already registered. Email must be unique for each user.
-    print(user)
     db_user = db.query(models.User).filter(models.User.email == user.email).first()
     if db_user:
         raise HTTPException(status_code=400, detail="Email already registered")
-    
+
+    hashed_password = hash_password(user.password)
+
     # Create a new user in the database. If the email is not already registered, the user is created successfully.
-    user = models.User(email=user.email, name=user.name, mobile_number=user.mobile_number)
+    user = models.User(email=user.email, name=user.name, mobile_number=user.mobile_number, password=hashed_password)
     db.add(user)
     db.commit()
     db.refresh(user)
@@ -38,15 +40,15 @@ def create_user(db: Session, user: UserCreate):
 
     
 
-def get_user(db: Session, user_id: int):
+def get_user(db: Session, email: str):
     """
     Get a user by ID.
 
     Attributes:
         db (Session): The database session.
-        user_id (int): The ID of the user.
+        email (str): The email of the user.
 
     Returns:
         User: The user with the specified ID.
     """
-    return db.query(models.User).filter(models.User.id == user_id).first()
+    return db.query(models.User).filter(models.User.email == email).first()

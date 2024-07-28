@@ -6,7 +6,7 @@ It includes routes to create a user and get a user by ID.
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from .. import operations, models, schemas
+from .. import operations, schemas
 from ..database import SessionLocal
 
 router = APIRouter()
@@ -38,19 +38,19 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     """
     return operations.create_user(db, user)
 
-@router.get("/{user_id}", response_model=schemas.User)
-def get_user(user_id: int, db: Session = Depends(get_db)):
+@router.get("/{email}", response_model=schemas.User)
+def get_user(email: str, db: Session = Depends(get_db)):
     """
     Get a user by ID.
 
     Attributes:
-        user_id (int): The ID of the user.
+        email (str): The email of the user.
         db (Session): The database session.
 
     Returns:
         User: The user with the specified ID.
     """
-    db_user = operations.get_user(db, user_id)
+    db_user = operations.get_user(db, email)
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
     return db_user
