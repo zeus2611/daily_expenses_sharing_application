@@ -4,7 +4,7 @@ from typing import List
 from fastapi.responses import StreamingResponse
 import pandas as pd
 import io
-from .. import crud, models, schemas
+from .. import operations, models, schemas
 from ..database import SessionLocal
 
 router = APIRouter()
@@ -19,20 +19,20 @@ def get_db():
 @router.post("/", response_model=schemas.Expense)
 def create_expense(expense: schemas.ExpenseCreate, db: Session = Depends(get_db)):
     try:
-        return crud.create_expense(db, expense)
+        return operations.create_expense(db, expense)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
 @router.get("/{expense_id}", response_model=schemas.Expense)
 def get_expense(expense_id: int, db: Session = Depends(get_db)):
-    db_expense = crud.get_expense(db, expense_id)
+    db_expense = operations.get_expense(db, expense_id)
     if db_expense is None:
         raise HTTPException(status_code=404, detail="Expense not found")
     return db_expense
 
 @router.get("/user/{user_id}", response_model=List[schemas.Participant])
 def get_user_expenses(user_id: int, db: Session = Depends(get_db)):
-    return crud.get_user_expenses(db, user_id)
+    return operations.get_user_expenses(db, user_id)
 
 @router.get("/balance-sheet/")
 def download_balance_sheet(db: Session = Depends(get_db)):

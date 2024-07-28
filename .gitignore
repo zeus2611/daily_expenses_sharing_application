@@ -4,4 +4,8 @@ venv
 app/__pycache__
 app/routes/__pycache__
 app/tests/__pycache__
+app/utils/__pycache__
+app/schemas/__pycache__
+app/models/__pycache__
+app/operations/__pycache__
 expenses.db
