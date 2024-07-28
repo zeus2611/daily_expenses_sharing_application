@@ -24,5 +24,6 @@ class User(Base):
     email = Column(String, unique=True, index=True)
     name = Column(String, index=True)
     mobile_number = Column(String, index=True)
+    password = Column(String)
     expenses = relationship("Expense", back_populates="creator")
     participants = relationship("Participant", back_populates="user")

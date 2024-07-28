@@ -24,6 +24,7 @@ def create_user(db: Session, user: UserCreate):
     """
 
     # Check if the email is already registered. Email must be unique for each user.
+    print(user)
     db_user = db.query(models.User).filter(models.User.email == user.email).first()
     if db_user:
         raise HTTPException(status_code=400, detail="Email already registered")

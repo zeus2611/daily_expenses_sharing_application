@@ -32,7 +32,7 @@ class UserCreate(UserBase):
         password (str): The password of the user.
     """
 
-    pass
+    password: str
 
 class User(UserBase):
     """
