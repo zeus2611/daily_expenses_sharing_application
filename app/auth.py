@@ -12,10 +12,7 @@ from jose import JWTError, jwt
 from app.models.token import Token
 from app.utils.password import verify_password
 
-router = APIRouter(
-  prefix="/auth",
-  tags=["auth"]
-)
+router = APIRouter()
 
 SECRET_KEY = "3a9997e0def85136a115abcfd7575ec5be9b3726612b952436b728881a915d1f"
 ALGORITHM = "HS256"
@@ -47,9 +44,7 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
   return {"access_token": access_token, "token_type": "bearer"}
 
 def authenticate_user(username: str, password: str, db: Session):
-  print(username + " " + password)
   user = db.query(User).filter(User.email == username).first()
-  print(user)
   if not user:
     return False
   if not verify_password(password, user.password):
@@ -58,11 +53,32 @@ def authenticate_user(username: str, password: str, db: Session):
 
 def create_access_token(data: dict, expires_delta: timedelta = None):
   to_encode = data.copy()
-  if expires_delta:
-    expire = datetime.now() + expires_delta
-  else:
-    expire = datetime.now() + timedelta(minutes=15)
-  to_encode.update({"exp": expire})
+  # if expires_delta:
+  #   expire = datetime.now() + expires_delta
+  # else:
+  #   expire = datetime.now() + timedelta(minutes=15)
+  # to_encode.update({"exp": expire})
   encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
   return encoded_jwt
 
+async def get_current_user(token: Annotated[str, Depends(oauth2_bearer)]):
+  try:
+    payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+    username: str = payload.get('sub')
+    user_id: int = payload.get('id')
+    if username is None or user_id is None:
+      raise HTTPException(status.HTTP_401_UNAUTHORIZED,
+                          detail='Could not validate user')
+    return {'usename': username, 'id': user_id}
+
+  except JWTError:
+    raise HTTPException(status.HTTP_401_UNAUTHORIZED,
+                          detail='Could not validate user')
+
+user_dependency = Annotated[dict, Depends(get_current_user)]
+
+@router.get("/current_user", status_code=status.HTTP_200_OK)
+async def user(user: user_dependency):
+  if user is None:
+    return HTTPException(status_code=401, detail="Authnetication failed")
+  return {"user": user}
