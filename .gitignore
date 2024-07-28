@@ -1,0 +1,7 @@
+.vscode
+.pytest_cache
+venv
+app/__pycache__
+app/routes/__pycache__
+app/tests/__pycache__
+expenses.db

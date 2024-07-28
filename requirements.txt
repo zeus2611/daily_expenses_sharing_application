@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+sqlalchemy
+databases
+alembic
+pytest
+pytest-asyncio
+httpx
+pandas
