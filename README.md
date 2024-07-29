@@ -180,8 +180,6 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)):
     # Otherwise create user
 ```
 
-Here's how you can handle and document the split type errors, specifically for total percentage and total amount integrity:
-
 ### Split Type Error Handling
 
 #### Total Percentage Integrity Error
