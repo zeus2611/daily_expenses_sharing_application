@@ -69,7 +69,7 @@ def authenticate_user(username: str, password: str, db: Session):
   if not user:
     return False
   if not verify_password(password, user.password):
-    return False
+    raise HTTPException(status_code=400, detail="Incorrect username or password")
   return user
 
 def create_access_token(data: dict, expires_delta: timedelta = None):
