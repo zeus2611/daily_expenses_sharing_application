@@ -6,7 +6,7 @@ from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from .database import engine
 from .models import Base
-from app.routes import users, expenses
+from app.routes import users, expenses, auth
 
 Base.metadata.create_all(bind=engine)
 
@@ -49,3 +49,4 @@ def read_root():
 
 app.include_router(users.router, prefix="/users", tags=["users"])
 app.include_router(expenses.router, prefix="/expenses", tags=["expenses"])
+app.include_router(auth.router, prefix="/auth", tags=["auth"])

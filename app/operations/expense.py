@@ -13,8 +13,9 @@ from app import models
 from app.schemas import ExpenseCreate
 from app.utils.split_type import SplitTypeEnum
 from app.operations.split import split_equal, split_exact, split_percentage
+from app.operations.auth import user_dependency
 
-def create_expense(db: Session, expense: ExpenseCreate):
+def create_expense(user: user_dependency, db: Session, expense: ExpenseCreate):
     """
     Create an expense in the database.
 
@@ -25,6 +26,8 @@ def create_expense(db: Session, expense: ExpenseCreate):
     Returns:
         Expense: The created expense.
     """
+    if user['id'] != expense.creator_id:
+        raise ValueError("User is not authorized to create the expense.")
     db_expense = models.Expense(
         description=expense.description,
         total_amount=expense.total_amount,
@@ -52,7 +55,7 @@ def create_expense(db: Session, expense: ExpenseCreate):
     db.commit()
     return db_expense
 
-def get_expense(db: Session, expense_id: int):
+def get_expense(user: user_dependency, db: Session, expense_id: int):
     """
     Get an expense by ID.
     An expense consists of the expense details, the creator of the expense, and the participants in the expense.
@@ -64,9 +67,11 @@ def get_expense(db: Session, expense_id: int):
     Returns:
         Expense: The expense with the specified ID.
     """
+    if db.query(models.Participant).filter(models.Participant.expense_id == expense_id, models.Participant.user_id == user['id']).first() is None:
+        raise ValueError("User is not authorized to view the expense.")
     return db.query(models.Expense).filter(models.Expense.id == expense_id).first()
 
-def get_user_expenses(db: Session, user_id: int):
+def get_user_expenses(user: user_dependency, db: Session):
     """
     Get all expenses for a user.
 
@@ -77,7 +82,7 @@ def get_user_expenses(db: Session, user_id: int):
     Returns:
         List[Expense]: The list of expenses for the user.
     """
-    return db.query(models.Participant).filter(models.Participant.user_id == user_id).all()
+    return db.query(models.Participant).filter(models.Participant.user_id == user['id']).all()
 
 def get_balance_sheet_data(db: Session):
     """

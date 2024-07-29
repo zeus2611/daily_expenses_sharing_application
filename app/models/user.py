@@ -16,6 +16,7 @@ class User(Base):
         email (str): The email of the user.
         name (str): The name of the user.
         mobile_number (str): The mobile number of the user.
+        password (str): The password of the user.
         expenses (List[Expense]): The list of expenses created by the user.
         participants (List[Participant]): The list of expenses the user has participated in.
     """
