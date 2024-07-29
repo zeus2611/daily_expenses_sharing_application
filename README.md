@@ -7,6 +7,7 @@ The Daily Expenses Sharing Application is designed to help users track and share
 ## Features
 
 - User Registration
+- Authentication and Authorization
 - Expense Tracking
 - Sharing Expenses with Participants
 - Comprehensive API Documentation
@@ -77,105 +78,11 @@ Open your browser and navigate to:
 
 ## API Endpoints
 
-### User Endpoints
+- [**Authentication Endpoint**](app/routes/auth.md) - This module contains the endpoints for authentication and authorization.
 
-- **Create User**
+- [**User Endpoints**](app/routes/users.md) - This module contains the endpoints for user management.
 
-    ```http
-    POST /users
-    ```
-
-    **Request Body**:
-
-    ```json
-    {
-      "email": "user@example.com",
-      "name": "John Doe",
-      "mobile_number": "8789713201"
-    }
-    ```
-
-    **Response**:
-
-    ```json
-    {
-      "id": 1,
-      "email": "user@example.com",
-      "name": "John Doe",
-      "mobile_number": "8789713201"
-    }
-    ```
-
-- **Get User**
-
-    ```http
-    GET /users/{user_id}
-    ```
-
-    **Response**:
-
-    ```json
-    {
-      "id": 1,
-      "email": "user@example.com",
-      "name": "John Doe",
-      "mobile_number": "8789713201"
-    }
-    ```
-
-### Expense Endpoints
-
-- **Create Expense**
-
-    ```http
-    POST /expenses
-    ```
-
-    **Request Body**:
-
-    ```json
-    {
-      "title": "Groceries",
-      "total_amount": 100.0,
-      "split_type": "EQUAL",
-      "participants": [
-        {
-          "user_id": "1"
-        },
-        {
-          "user_id": "2"
-        }
-      ]
-    }
-    ```
-
-    **Response**:
-
-    ```json
-    {
-      "description": "string",
-      "total_amount": 0,
-      "date": "2024-07-28",
-      "split_type": "EQUAL",
-      "creator_id": 0,
-      "participants": [
-        {
-          "user_id": 0,
-          "amount": 0,
-          "percentage": 0,
-          "id": 0,
-          "expense_id": 0
-        }
-      ],
-      "id": 0,
-      "creator": {
-        "email": "user@example.com",
-        "name": "string",
-        "mobile_number": "0979073951",
-        "id": 0
-      }
-    }
-    ```
+- [**Expense Endpoints**](app/routes/expenses.md) - This module contains the endpoints for expense management.
 
 ## Models
 
@@ -268,16 +175,11 @@ async def validation_exception_handler(request: Request, exc: ValidationError):
 Unique constraint violations (e.g., duplicate email) are managed and returned as a `400 Bad Request` response:
 
 ```python
-@router.post("/users", response_model=User)
-async def create_user(user: UserCreate, db: Session = Depends(get_db)):
+def create_user(user: UserCreate, db: Session = Depends(get_db)):
     db_user = db.query(UserModel).filter(UserModel.email == user.email).first()
     if db_user:
         raise HTTPException(status_code=400, detail="Email already registered")
-    new_user = UserModel(email=user.email, name=user.name, mobile_number=user.mobile_number)
-    db.add(new_user)
-    db.commit()
-    db.refresh(new_user)
-    return new_user
+    # Otherwise create user
 ```
 
 Here's how you can handle and document the split type errors, specifically for total percentage and total amount integrity:
