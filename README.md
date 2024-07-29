@@ -76,11 +76,11 @@ Open your browser and navigate to:
 
 ## API Endpoints
 
-- [**Authentication Endpoint**](app/routes/auth.md) - This module contains the endpoints for authentication and authorization.
+- [**Authentication Endpoint**](docs/routes/auth.md) - This module contains the endpoints for authentication and authorization.
 
-- [**User Endpoints**](app/routes/users.md) - This module contains the endpoints for user management.
+- [**User Endpoints**](docs/routes/users.md) - This module contains the endpoints for user management.
 
-- [**Expense Endpoints**](app/routes/expenses.md) - This module contains the endpoints for expense management.
+- [**Expense Endpoints**](docs/routes/expenses.md) - This module contains the endpoints for expense management.
 
 ## Models
 
