@@ -74,6 +74,13 @@ Open your browser and navigate to:
 - Swagger UI: [http://localhost:8000/docs](http://localhost:8000/docs)
 - Redoc: [http://localhost:8000/redoc](http://localhost:8000/redoc)
 
+### Running the tests
+
+After installation, we can run the tests:
+```bash
+pytest tests/
+```
+
 ## API Endpoints
 
 - [**Authentication Endpoint**](docs/routes/auth.md) - This module contains the endpoints for authentication and authorization.
