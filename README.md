@@ -20,8 +20,6 @@ The Daily Expenses Sharing Application is designed to help users track and share
 4. [Models](#models)
 5. [Error Handling](#error-handling)
 6. [Validation](#validation)
-7. [Contributing](#contributing)
-8. [License](#license)
 
 ## Installation
 
