@@ -48,6 +48,8 @@ The Daily Expenses Sharing Application is designed to help users track and share
 3. Install the required dependencies:
 
     ```bash
+    python3 -m venv venv 
+    source venv/bin/activate
     pip install -r requirements.txt
     ```
 
